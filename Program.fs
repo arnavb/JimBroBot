@@ -1,4 +1,4 @@
-﻿module Main
+﻿module JimBroBot.Program
 
 open dotenv.net
 open dotenv.net.Utilities
@@ -6,7 +6,7 @@ open Discord
 open Discord.WebSocket
 open System.Threading.Tasks
 
-open DomainTypes
+open JimBroBot.DomainTypes
 
 let loadBotToken () =
     DotEnv.Load(new DotEnvOptions(probeForEnv = true, ignoreExceptions = false))

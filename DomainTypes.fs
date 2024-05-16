@@ -1,4 +1,4 @@
-module DomainTypes
+module JimBroBot.DomainTypes
 
 type BotError =
     | NoEnvBotToken
