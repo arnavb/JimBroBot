@@ -1,12 +1,12 @@
-﻿open dotenv.net
+﻿module Main
+
+open dotenv.net
 open dotenv.net.Utilities
 open Discord
 open Discord.WebSocket
 open System.Threading.Tasks
 
-type BotError =
-    | NoEnvBotToken
-    | BotStartError of string
+open DomainTypes
 
 let loadBotToken () =
     DotEnv.Load(new DotEnvOptions(probeForEnv = true, ignoreExceptions = false))
@@ -19,7 +19,7 @@ let loadBotToken () =
 
 
 let log message =
-    printfn "%s" (message.ToString())
+    printfn $"{message.ToString()}"
     Task.CompletedTask
 
 
@@ -37,7 +37,7 @@ let createAndStartClient (botToken: string) =
 
             do! Task.Delay(-1) |> Async.AwaitTask
 
-            return Ok ""
+            return Ok "Success"
         with error ->
             return Error(BotStartError(error.ToString()))
     }
@@ -48,17 +48,11 @@ let handleExit result =
     match result with
     | Ok _ -> 0
     | Error(BotStartError exc) ->
-        printfn "Exception: %s" exc
+        printfn $"Exception: {exc}"
         1
     | Error err ->
-        printfn "Error: %s" (err.ToString())
+        printfn $"Error: {err.ToString()}"
         1
-
-let tryParse (input: string) =
-    match System.Int32.TryParse input with
-    | true, v -> Ok v
-    | false, _ -> Error "couldn't parse"
-
 
 [<EntryPoint>]
 let main args =
