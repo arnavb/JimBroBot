@@ -24,23 +24,22 @@ let log message =
 
 
 let createAndStartClient (botToken: string) =
-    let client = new DiscordSocketClient()
+    use client = new DiscordSocketClient()
     client.add_Log log
 
-    async {
+    task {
         try
-            do!
-                client.LoginAsync(tokenType = TokenType.Bot, token = botToken)
-                |> Async.AwaitTask
+            do! client.LoginAsync(tokenType = TokenType.Bot, token = botToken)
 
-            do! client.StartAsync() |> Async.AwaitTask
+            do! client.StartAsync()
 
-            do! Task.Delay(-1) |> Async.AwaitTask
+            do! Task.Delay(-1)
 
             return Ok "Success"
         with error ->
             return Error(BotStartError(error.ToString()))
     }
+    |> Async.AwaitTask
     |> Async.RunSynchronously
 
 
