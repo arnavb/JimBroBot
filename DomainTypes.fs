@@ -8,21 +8,31 @@ type BotError =
     | NoEnvBotToken
     | BotStartError of string
 
-type ExerciseInfo = { UserId: string; Name: string }
+type ExerciseType =
+    | SetBased
+    | SpeedBased
+    | TimeBased
 
-type SetBasedDetails =
+type ExerciseInfo = { Name: string; Type: ExerciseType }
+
+type SetDetails =
     { Warmup: bool; Reps: int; Weight: int }
 
-type SpeedBasedDetails = { Duration: int; Distance: int }
+type SpeedDetails =
+    { Duration: int; DistanceMiles: double }
 
-type TimeBasedDetails = { Duration: int }
+type TimeDetails = { Duration: int }
 
 type ExerciseLogDetails =
-    | SpeedDetails of SpeedBasedDetails
-    | TimeDetails of TimeBasedDetails
-    | AllSetDetails of SetBasedDetails seq
+    | SpeedDetails of SpeedDetails
+    | TimeDetails of TimeDetails
+    | AllSetDetails of SetDetails seq
 
-type ExerciseLog =
+type ExerciseLogItem =
     { Info: ExerciseInfo
-      LogDetails: ExerciseLogDetails
-      Notes: string }
+      Details: ExerciseLogDetails }
+
+type User =
+    { Id: uint64
+      Exercises: ExerciseInfo seq
+      ExerciseLog: ExerciseLogItem seq }
