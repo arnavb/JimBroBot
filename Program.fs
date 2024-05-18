@@ -39,7 +39,7 @@ let ready (interactionService: InteractionService) testGuildId () =
         do! interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), null) :> Task
 
         interactionService.Modules
-        |> Seq.iter (fun (md: ModuleInfo) -> printfn $"{md.Name} has {md.SlashCommands.Count} slash commands")
+        |> Seq.iter (fun md -> printfn $"{md.Name} has {md.SlashCommands.Count} slash commands")
 
         match testGuildId with
         | Some testGuildId -> do! interactionService.RegisterCommandsToGuildAsync testGuildId :> Task
