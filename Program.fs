@@ -6,10 +6,14 @@ open Discord
 open Discord.Interactions
 open Discord.WebSocket
 open System.Threading.Tasks
-open System.Reflection
 open System
 
 open JimBroBot.DomainTypes
+open JimBroBot.UserCommands
+
+let commands =
+    [ "add", (addExerciseBuilder, addExerciseBuilder)
+      "log", (logExerciseBuilder, logExerciseBuilder) ]
 
 let loadBotConfig () =
     DotEnv.Load(new DotEnvOptions(probeForEnv = true, ignoreExceptions = false))
@@ -28,22 +32,24 @@ let loadBotConfig () =
               TestGuildId = None }
     | false, _ -> Error NoEnvBotToken
 
+let buildCommands (client: DiscordSocketClient) =
+    commands
+    |> List.map (fun (name, (commandBuilder, _)) -> name |> commandBuilder)
+    |> List.map _.Build()
 
 let log (message: LogMessage) =
     printfn $"{message.ToString()}"
     Task.CompletedTask
 
-let ready (interactionService: InteractionService) testGuildId () =
+let ready (client: DiscordSocketClient) testGuildId () =
     task {
+        let! _ =
+            buildCommands client
+            |> List.map (fun builtCommand ->
+                client.Rest.CreateGuildCommand(builtCommand, testGuildId) |> Async.AwaitTask)
+            |> Async.Parallel
+
         printfn "Bot is ready!"
-        do! interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), null) :> Task
-
-        interactionService.Modules
-        |> Seq.iter (fun md -> printfn $"{md.Name} has {md.SlashCommands.Count} slash commands")
-
-        match testGuildId with
-        | Some testGuildId -> do! interactionService.RegisterCommandsToGuildAsync testGuildId :> Task
-        | None -> do! interactionService.RegisterCommandsGloballyAsync() :> Task
     }
     :> Task
 
@@ -61,7 +67,7 @@ let createAndStartClient botConfig =
 
     // Register event handlers
     client.add_Log log
-    client.add_Ready (ready interactionService botConfig.TestGuildId)
+    client.add_Ready (ready client (Option.defaultValue 3UL botConfig.TestGuildId))
     client.add_InteractionCreated (interactionCreated client interactionService)
 
     task {
