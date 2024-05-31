@@ -22,9 +22,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: |
+            6.0.403
+            8.x
       - name: Install Tools
         run: dotnet tool restore
+      - name: Temporary workaround
+        run: dotnet new globaljson --sdk-version 6.0.403 --roll-forward minor
       - run: dotnet dotnet-fsharplint lint JimBroBot.fsproj
   format_check:
     runs-on: ubuntu-latest
