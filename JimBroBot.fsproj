@@ -6,7 +6,6 @@
   <ItemGroup>
     <Compile Include="DomainTypes.fs" />
     <Compile Include="User.fs" />
-    <Compile Include="Modules\WorkoutModule.fs" />
     <Compile Include="UserCommands.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
