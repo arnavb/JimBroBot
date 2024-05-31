@@ -53,10 +53,6 @@ let ready (client: DiscordSocketClient) testGuildId () =
     }
     :> Task
 
-let interactionCreated client (interactionService: InteractionService) message =
-    let ctx = SocketInteractionContext(client, message)
-
-    task { do! interactionService.ExecuteCommandAsync(ctx, null) :> Task } :> Task
 
 
 let createAndStartClient botConfig =
@@ -68,7 +64,6 @@ let createAndStartClient botConfig =
     // Register event handlers
     client.add_Log log
     client.add_Ready (ready client (Option.defaultValue 3UL botConfig.TestGuildId))
-    client.add_InteractionCreated (interactionCreated client interactionService)
 
     task {
         try
