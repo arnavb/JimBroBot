@@ -16,7 +16,7 @@ let commands =
       "log", (logExerciseBuilder, logExerciseBuilder) ]
 
 let loadBotConfig () =
-    DotEnv.Load(new DotEnvOptions(probeForEnv = true, ignoreExceptions = false))
+    DotEnv.Load(DotEnvOptions(probeForEnv = true, ignoreExceptions = false))
 
     let botTokenSuccess, botToken = EnvReader.TryGetStringValue("JIM_BRO_BOT_TOKEN")
     let testGuildIdSuccess, testGuildId = EnvReader.TryGetStringValue("TEST_GUILD_ID")
@@ -54,14 +54,14 @@ let ready (client: DiscordSocketClient) testGuildId () =
     :> Task
 
 let interactionCreated client (interactionService: InteractionService) message =
-    let ctx = new SocketInteractionContext(client, message)
+    let ctx = SocketInteractionContext(client, message)
 
     task { do! interactionService.ExecuteCommandAsync(ctx, null) :> Task } :> Task
 
 
 let createAndStartClient botConfig =
     use client =
-        new DiscordSocketClient(new DiscordSocketConfig(GatewayIntents = GatewayIntents.GuildMessageReactions))
+        new DiscordSocketClient(DiscordSocketConfig(GatewayIntents = GatewayIntents.GuildMessageReactions))
 
     use interactionService = new InteractionService(client.Rest)
 
