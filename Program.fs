@@ -11,9 +11,7 @@ open System
 open JimBroBot.DomainTypes
 open JimBroBot.UserCommands
 
-let commands =
-    [ "add", (addExerciseBuilder, addExerciseBuilder)
-      "log", (logExerciseBuilder, logExerciseBuilder) ]
+let commands = [ "add", (addExerciseBuilder, addExerciseResponder) ]
 
 let loadBotConfig () =
     DotEnv.Load(DotEnvOptions(probeForEnv = true, ignoreExceptions = false))
@@ -37,6 +35,15 @@ let buildCommands (client: DiscordSocketClient) =
     |> List.map (fun (name, (commandBuilder, _)) -> name |> commandBuilder)
     |> List.map _.Build()
 
+let findAndExecuteCommand (name: string, socketSlashCommand: SocketSlashCommand) =
+    task {
+        match commands |> List.tryFind (fun elem -> fst elem = name) with
+        | Some(_, (_, commandResponder)) ->
+            do! commandResponder socketSlashCommand
+            return Ok()
+        | None -> return Error MissingCommandHandler
+    }
+
 let log (message: LogMessage) =
     printfn $"{message.ToString()}"
     Task.CompletedTask
@@ -53,7 +60,15 @@ let ready (client: DiscordSocketClient) testGuildId () =
     }
     :> Task
 
+let slashCommandExecuted (command: SocketSlashCommand) =
+    task {
+        let! commandExecution = findAndExecuteCommand (command.Data.Name, command)
 
+        match commandExecution with
+        | Ok _ -> ()
+        | Error err -> printfn $"Got error {err}"
+    }
+    :> Task
 
 let createAndStartClient botConfig =
     use client =
@@ -64,6 +79,7 @@ let createAndStartClient botConfig =
     // Register event handlers
     client.add_Log log
     client.add_Ready (ready client (Option.defaultValue 3UL botConfig.TestGuildId))
+    client.add_SlashCommandExecuted slashCommandExecuted
 
     task {
         try

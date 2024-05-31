@@ -7,6 +7,7 @@ type BotConfig =
 type BotError =
     | NoEnvBotToken
     | BotStartError of string
+    | MissingCommandHandler
 
 type ExerciseType =
     | SetBased
