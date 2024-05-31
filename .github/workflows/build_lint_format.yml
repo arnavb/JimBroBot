@@ -1,4 +1,4 @@
-name: Build
+name: Build / Lint Check / Format Check
 
 on:
   push:
@@ -15,7 +15,18 @@ jobs:
         with:
           dotnet-version: '8.x'
       - run: dotnet build
-  format:
+  lint_check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+      - name: Install Tools
+        run: dotnet tool restore
+      - run: dotnet dotnet-fsharplint lint JimBroBot.fsproj
+  format_check:
     runs-on: ubuntu-latest
 
     steps:
