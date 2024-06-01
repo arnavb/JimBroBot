@@ -11,7 +11,9 @@ open System
 open JimBroBot.DomainTypes
 open JimBroBot.UserCommands
 
-let commands = [ "add", (addExerciseBuilder, addExerciseResponder) ]
+let commands =
+    [ "add", (addExerciseBuilder, addExerciseResponder)
+      "log", (logExerciseBuilder, logExerciseResponder) ]
 
 let loadBotConfig () =
     DotEnv.Load(DotEnvOptions(probeForEnv = true, ignoreExceptions = false))
