@@ -37,10 +37,3 @@ type User =
     { Id: uint64
       Exercises: ExerciseInfo seq
       ExerciseLog: ExerciseLogItem seq }
-
-let stringToExerciseType str =
-    match str with
-    | "set" -> SetBased
-    | "speed" -> SpeedBased
-    | "time" -> TimeBased
-    | _ -> failwith "Unexpected exercise type"

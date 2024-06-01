@@ -4,6 +4,7 @@ open Discord
 open Discord.WebSocket
 
 open JimBroBot.DomainTypes
+open JimBroBot.Converters
 
 let addExerciseBuilder name =
     (new SlashCommandBuilder())
