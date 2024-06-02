@@ -2,6 +2,7 @@ module JimBroBot.UserCommands
 
 open Discord
 open Discord.WebSocket
+open TimeSpanParserUtil
 
 open JimBroBot.DomainTypes
 open JimBroBot.Converters
@@ -91,6 +92,54 @@ let logExerciseBuilder name =
                     choices = Array.empty
                 )
         )
+        .AddOption(
+            (new SlashCommandOptionBuilder())
+                .WithName("speed")
+                .WithDescription("Log a speed based exercise")
+                .WithType(ApplicationCommandOptionType.SubCommand)
+                .AddOption(
+                    "name",
+                    ApplicationCommandOptionType.String,
+                    "Name of exercise",
+                    isRequired = true,
+                    choices = Array.empty
+                )
+                .AddOption(
+                    "duration",
+                    ApplicationCommandOptionType.String,
+                    "Duration for this exercise (e.g 1h 30, 1:30, 1h 30 mins 0 secs)",
+                    isRequired = true,
+                    choices = Array.empty
+                )
+                .AddOption(
+                    "distance",
+                    ApplicationCommandOptionType.Number,
+                    "Distance travelled for this exercise (miles)",
+                    isRequired = true,
+                    minValue = 0.0,
+                    choices = Array.empty
+                )
+        )
+        .AddOption(
+            (new SlashCommandOptionBuilder())
+                .WithName("time")
+                .WithDescription("Log a time based exercise")
+                .WithType(ApplicationCommandOptionType.SubCommand)
+                .AddOption(
+                    "name",
+                    ApplicationCommandOptionType.String,
+                    "Name of exercise",
+                    isRequired = true,
+                    choices = Array.empty
+                )
+                .AddOption(
+                    "duration",
+                    ApplicationCommandOptionType.String,
+                    "Duration for this exercise (e.g 1h 30, 1:30, 1h 30 mins 0 secs)",
+                    isRequired = true,
+                    choices = Array.empty
+                )
+        )
 
 let logSetHelper (command: SocketSlashCommand) (options: obj list) =
     let (name, count, reps, weight, warmup) =
@@ -116,9 +165,54 @@ let logSetHelper (command: SocketSlashCommand) (options: obj list) =
         do! command.RespondAsync $"Logging {count} set(s) of {name} with {reps} reps of {weight} lbs each ({warmup})"
     }
 
-let logSpeedHelper (command: SocketSlashCommand) options = task { return () }
+let logSpeedHelper (command: SocketSlashCommand) (options: obj list) =
+    let (name, duration, distance) =
+        match options with
+        | rawName :: rawDuration :: rawDistance :: _ ->
+            let name = rawName :?> string
+            let duration = rawDuration :?> string
+            let distance = rawDistance :?> double
 
-let logTimeHelper (command: SocketSlashCommand) options = task { return () }
+            name, duration, distance
+        | _ -> failwith "Missing parameter (should be impossible)"
+
+
+    task {
+        match TimeSpanParser.TryParse duration with
+        | (true, parsedDuration) ->
+            do! command.RespondAsync $"Logging {name} for {parsedDuration} and distance {distance}"
+        | (false, _) ->
+            do!
+                command.RespondAsync(
+                    $"{duration} is not a valid duration! Examples of valid durations are 1 hour 30 mins, 1:30, 20 mins, etc. \
+                    Note that 1:30 will parse as 1 HOUR 30 mins, not 1 min 30 seconds.",
+                    ephemeral = true
+                )
+    }
+
+let logTimeHelper (command: SocketSlashCommand) (options: obj list) =
+    let (name, duration) =
+        match options with
+        | rawName :: rawDuration :: _ ->
+            let name = rawName :?> string
+            let duration = rawDuration :?> string
+
+            name, duration
+        | _ -> failwith "Missing parameter (should be impossible)"
+
+
+    task {
+        match TimeSpanParser.TryParse duration with
+        | (true, parsedDuration) -> do! command.RespondAsync $"Logging {name} for {parsedDuration}"
+        | (false, _) ->
+            do!
+                command.RespondAsync(
+                    $"{duration} is not a valid duration! Examples of valid durations are 1 hour 30 mins, 1:30, 20 mins, etc. \
+                    Note that 1:30 will parse as 1 HOUR 30 mins, not 1 min 30 seconds.",
+                    ephemeral = true
+                )
+    }
+
 
 let logExerciseResponder (command: SocketSlashCommand) =
     let user = command.User
