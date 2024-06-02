@@ -231,3 +231,12 @@ let logExerciseResponder (command: SocketSlashCommand) =
         | TimeBased -> logTimeHelper
 
     task { do! helper command parameters }
+
+
+let undoExerciseBuilder name =
+    (new SlashCommandBuilder())
+        .WithName(name)
+        .WithDescription("Undo most recent exercise entry")
+
+let undoExerciseResponder (command: SocketSlashCommand) =
+    task { do! command.RespondAsync "Done!" }

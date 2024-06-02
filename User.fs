@@ -14,3 +14,10 @@ let addExercise user exercise =
 let logExercise user exercise =
     { user with
         ExerciseLog = Seq.append exercise user.ExerciseLog }
+
+let undoExercise user =
+    if user |> _.ExerciseLog |> Seq.isEmpty then
+        user
+    else
+        { user with
+            ExerciseLog = Seq.skip 1 user.ExerciseLog }
