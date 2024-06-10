@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DomainTypes.fs" />
+    <Compile Include="Data.fs" />
     <Compile Include="User.fs" />
     <Compile Include="Converters.fs" />
     <Compile Include="UserCommands.fs" />
