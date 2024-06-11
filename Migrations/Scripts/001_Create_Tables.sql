@@ -35,7 +35,8 @@ CREATE TABLE
 CREATE TABLE
     speed_exercise_details (
         id INT PRIMARY KEY,
-        duration_sec INT NOT NULL distance_miles REAL NOT NULL,
+        duration_sec INT NOT NULL,
+        distance_miles REAL NOT NULL,
         exercise_log_id INT NOT NULL,
         FOREIGN KEY (exercise_log_id) REFERENCES exercise_log (id)
     );
@@ -45,5 +46,5 @@ CREATE TABLE
         id INT PRIMARY KEY,
         duration_sec INT NOT NULL,
         exercise_log_id INT NOT NULL,
-        FOREIGN KEY (exercise_log_id) REFERENCES exercise_log (id),
+        FOREIGN KEY (exercise_log_id) REFERENCES exercise_log (id)
     );
