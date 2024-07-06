@@ -1,18 +1,19 @@
 ﻿open System.Reflection
 
 open DbUp
-open Microsoft.Data.Sqlite
 
 [<EntryPoint>]
 let main args =
-    let connectionString = "Data Source=JimBroBot.db"
+    // TODO: Replace temporary connection string with proper environment setup
+    let connection =
+        "Host=localhost;Port=5432;Username=jimbrobotdb;\
+                            Password=jimbrobotdbpassword;Database=jimbrobotdb"
 
-    use connection = new SqliteConnection(connectionString)
-    use _ = new SQLite.Helpers.SharedConnection(connection)
+    EnsureDatabase.For.PostgresqlDatabase(connection)
 
     let upgrader =
         DeployChanges.To
-            .SQLiteDatabase(connection.ConnectionString)
+            .PostgresqlDatabase(connection)
             .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
             .LogToConsole()
             .Build()

@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="DbUp" Version="5.0.40" />
+    <PackageReference Include="dbup-postgresql" Version="5.0.40" />
     <PackageReference Include="dbup-sqlite" Version="5.0.40" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.6" />
   </ItemGroup>
