@@ -1,0 +1,27 @@
+name: Run Migrations
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  run_migrations:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: jimbrobotdb
+          POSTGRES_PASSWORD: jimbrobotpassword
+        ports:
+          - 5432:5432
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.x"
+      - run: dotnet run --project Migrations
+
