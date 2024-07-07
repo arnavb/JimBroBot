@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'Migrations/'
 
 jobs:
   run_migrations:
