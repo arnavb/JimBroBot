@@ -3,7 +3,6 @@
 open dotenv.net
 open dotenv.net.Utilities
 open Discord
-open Discord.Interactions
 open Discord.WebSocket
 open System.Threading.Tasks
 open System
@@ -33,7 +32,7 @@ let loadBotConfig () =
               TestGuildId = None }
     | false, _ -> Error NoEnvBotToken
 
-let buildCommands (client: DiscordSocketClient) =
+let buildCommands =
     commands
     |> List.map (fun (name, (commandBuilder, _)) -> name |> commandBuilder)
     |> List.map _.Build()
@@ -54,7 +53,7 @@ let log (message: LogMessage) =
 let ready (client: DiscordSocketClient) testGuildId () =
     task {
         let! _ =
-            buildCommands client
+            buildCommands
             |> List.map (fun builtCommand ->
                 client.Rest.CreateGuildCommand(builtCommand, testGuildId) |> Async.AwaitTask)
             |> Async.Parallel
@@ -76,8 +75,6 @@ let slashCommandExecuted (command: SocketSlashCommand) =
 let createAndStartClient botConfig =
     use client =
         new DiscordSocketClient(DiscordSocketConfig(GatewayIntents = GatewayIntents.GuildMessageReactions))
-
-    use interactionService = new InteractionService(client.Rest)
 
     // Register event handlers
     client.add_Log log
