@@ -37,11 +37,11 @@ CREATE TABLE
 CREATE TABLE
     set_exercise_detail
 (
-    id                INTEGER NOT NULL REFERENCES all_set_detail (id),
-    reps              INT     NOT NULL,
-    weight            INT     NOT NULL,
-    is_warmup         BOOLEAN NOT NULL,
-    sequence_order    INT     NOT NULL,
+    id             INTEGER NOT NULL REFERENCES all_set_detail (id),
+    reps           INT     NOT NULL,
+    weight         DECIMAL NOT NULL,
+    is_warmup      BOOLEAN NOT NULL,
+    sequence_order INT     NOT NULL,
 
     PRIMARY KEY (id, sequence_order)
 );
@@ -49,16 +49,14 @@ CREATE TABLE
 CREATE TABLE
     speed_exercise_detail
 (
-    id              INTEGER PRIMARY KEY REFERENCES exercise_log (id),
-    duration_sec    INT  NOT NULL,
-    distance_miles  REAL NOT NULL,
-    exercise_log_id INT  NOT NULL
+    id             INTEGER PRIMARY KEY REFERENCES exercise_log (id),
+    duration_sec   INT  NOT NULL,
+    distance_miles REAL NOT NULL
 );
 
 CREATE TABLE
     time_exercise_details
 (
-    id              INTEGER PRIMARY KEY REFERENCES exercise_log (id),
-    duration_sec    INT NOT NULL,
-    exercise_log_id INT NOT NULL
+    id           INTEGER PRIMARY KEY REFERENCES exercise_log (id),
+    duration_sec INT NOT NULL
 );
