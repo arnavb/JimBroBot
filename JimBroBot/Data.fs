@@ -2,31 +2,31 @@ module JimBroBot.Data
 
 open System
 
-type BotUser = { Id: uint32; DiscordId: string }
+type BotUser = { Id: int; DiscordId: string }
 
 type Exercise =
-    { Id: uint32
+    { Id: int
       Name: string
       Type: string
-      BotUserId: uint32 }
+      BotUserId: int }
 
 type ExerciseLog =
-    { Id: uint32
-      ExerciseId: uint32
+    { Id: int
+      ExerciseId: int
       LogDate: DateOnly }
 
-type AllSetDetail = { Id: uint32 }
+type AllSetDetail = { Id: int }
 
 type SetExerciseDetail =
-    { Id: uint32
-      Reps: uint32
+    { Id: int
+      Reps: int
       Weight: double
       IsWarmup: bool
-      SequenceOrder: uint32 }
+      SequenceOrder: int }
 
 type SpeedExerciseDetail =
-    { Id: uint32
-      DurationSec: uint32
+    { Id: int
+      DurationSec: int
       DistanceMiles: double }
 
 type TimeExerciseDetail = { Id: uint32; DurationSec: uint32 }
