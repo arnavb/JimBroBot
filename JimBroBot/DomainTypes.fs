@@ -34,6 +34,6 @@ type ExerciseLogItem =
       Details: ExerciseLogDetails }
 
 type User =
-    { Id: uint64
+    { Id: string
       Exercises: ExerciseInfo seq
       ExerciseLog: ExerciseLogItem seq }
