@@ -50,7 +50,7 @@ let readBotUser (connectionString: string) (discordId: string) =
 let readExercisesForBotUser (connectionString: string) (botUserId: int) =
     connectionString
     |> Sql.connect
-    |> Sql.query "SELECT * FROM exercise_log WHERE bot_user_id = @bot_user_id"
+    |> Sql.query "SELECT * FROM exercise WHERE bot_user_id = @bot_user_id"
     |> Sql.parameters [ "bot_user_id", Sql.int botUserId ]
     |> Sql.executeAsync (fun read ->
         { Id = read.int "id"
@@ -61,7 +61,7 @@ let readExercisesForBotUser (connectionString: string) (botUserId: int) =
 let readExerciseLogEntriesForBotUser (connectionString: string) (botUserId: int) =
     connectionString
     |> Sql.connect
-    |> Sql.query "SELECT * FROM exercise WHERE bot_user_id = @bot_user_id"
+    |> Sql.query "SELECT * FROM exercise_log WHERE bot_user_id = @bot_user_id"
     |> Sql.parameters [ "bot_user_id", Sql.int botUserId ]
     |> Sql.executeAsync (fun read ->
         { Id = read.int "id"
