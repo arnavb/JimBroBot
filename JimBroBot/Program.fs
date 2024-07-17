@@ -47,7 +47,7 @@ let findAndExecuteCommand (name: string, socketSlashCommand: SocketSlashCommand)
     task {
         match commands |> List.tryFind (fun elem -> fst elem = name) with
         | Some(_, (_, commandResponder)) ->
-            do! commandResponder socketSlashCommand
+            do! commandResponder socketSlashCommand connectionString
             return Ok()
         | None -> return Error MissingCommandHandler
     }

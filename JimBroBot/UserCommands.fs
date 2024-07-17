@@ -29,7 +29,7 @@ let addExerciseBuilder name =
             choices = Array.empty
         )
 
-let addExerciseResponder (command: SocketSlashCommand) =
+let addExerciseResponder (command: SocketSlashCommand) connectionString =
     let user = command.User
     let allOptions = command.Data.Options |> List.ofSeq |> List.map _.Value
 
@@ -214,7 +214,7 @@ let logTimeHelper (command: SocketSlashCommand) (options: obj list) =
     }
 
 
-let logExerciseResponder (command: SocketSlashCommand) =
+let logExerciseResponder (command: SocketSlashCommand) connectionString =
     let user = command.User
 
     let allOptions = command.Data.Options |> List.ofSeq
@@ -238,7 +238,7 @@ let undoExerciseBuilder name =
         .WithName(name)
         .WithDescription("Undo most recent exercise entry")
 
-let undoExerciseResponder (command: SocketSlashCommand) =
+let undoExerciseResponder (command: SocketSlashCommand) connectionString =
     task { do! command.RespondAsync "Done!" }
 
 let profileBuilder name =
@@ -246,7 +246,7 @@ let profileBuilder name =
         .WithName(name)
         .WithDescription("View bot user profile")
 
-let profileResponder (command: SocketSlashCommand) =
+let profileResponder (command: SocketSlashCommand) connectionString =
     task {
         do! command.DeferAsync()
 
