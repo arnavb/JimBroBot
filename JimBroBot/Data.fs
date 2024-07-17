@@ -1,37 +1,11 @@
 module JimBroBot.Data
 
-open System
+open JimBroBot.Converters
+open JimBroBot.DomainTypes
+open JimBroBot.RawDataTypes
 
 open Npgsql.FSharp
 
-type BotUser = { Id: int; DiscordId: string }
-
-type Exercise =
-    { Id: int
-      Name: string
-      Type: string
-      BotUserId: int }
-
-type ExerciseLog =
-    { Id: int
-      ExerciseId: int
-      LogDate: DateOnly }
-
-type AllSetDetail = { Id: int }
-
-type SetExerciseDetail =
-    { Id: int
-      Reps: int
-      Weight: double
-      IsWarmup: bool
-      SequenceOrder: int }
-
-type SpeedExerciseDetail =
-    { Id: int
-      DurationSec: int
-      DistanceMiles: double }
-
-type TimeExerciseDetail = { Id: uint32; DurationSec: uint32 }
 
 let readBotUser (connectionString: string) (discordId: string) =
     connectionString
@@ -62,3 +36,18 @@ let readExerciseLogEntriesForBotUser (connectionString: string) (botUserId: int)
         { Id = read.int "id"
           ExerciseId = read.int "exercise_id"
           LogDate = read.dateOnly "log_date" })
+
+
+let loadDataForUser (connectionString: string, discordId: string) =
+    task {
+        let! botUser = readBotUser connectionString discordId
+        let! botUserExercises = readExercisesForBotUser connectionString botUser.Id
+
+        let exerciseInfos = botUserExercises |> Seq.map databaseExerciseToDomainExerciseInfo
+
+        // TODO: Figure out way to load and combine exercise log
+        return
+            { Id = discordId
+              Exercises = exerciseInfos
+              ExerciseLog = Seq.empty }
+    }
