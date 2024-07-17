@@ -240,3 +240,24 @@ let undoExerciseBuilder name =
 
 let undoExerciseResponder (command: SocketSlashCommand) =
     task { do! command.RespondAsync "Done!" }
+
+let profileBuilder name =
+    (new SlashCommandBuilder())
+        .WithName(name)
+        .WithDescription("View bot user profile")
+
+let profileResponder (command: SocketSlashCommand) =
+    task {
+        do! command.DeferAsync()
+
+        let user = command.User
+
+        let profileEmbed =
+            (EmbedBuilder())
+                .WithTitle($"{user.Mention}'s Profile")
+                .WithDescription("A summary of various stats")
+
+        let! _ = command.FollowupAsync(embed = profileEmbed.Build())
+
+        return ()
+    }

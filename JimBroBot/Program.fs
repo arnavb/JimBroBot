@@ -13,7 +13,8 @@ open JimBroBot.UserCommands
 let commands =
     [ "add", (addExerciseBuilder, addExerciseResponder)
       "log", (logExerciseBuilder, logExerciseResponder)
-      "undo", (undoExerciseBuilder, undoExerciseResponder) ]
+      "undo", (undoExerciseBuilder, undoExerciseResponder)
+      "profile", (profileBuilder, profileResponder) ]
 
 let loadBotConfig () =
     DotEnv.Load(DotEnvOptions(probeForEnv = true, ignoreExceptions = false))
