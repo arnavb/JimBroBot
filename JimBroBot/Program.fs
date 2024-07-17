@@ -16,6 +16,11 @@ let commands =
       "undo", (undoExerciseBuilder, undoExerciseResponder)
       "profile", (profileBuilder, profileResponder) ]
 
+// TODO: Replace temporary connection string with proper environment setup
+let connectionString =
+    "Host=localhost;Port=5432;Username=jimbrobotdb;\
+                        Password=jimbrobotdbpassword;Database=jimbrobotdb"
+
 let loadBotConfig () =
     DotEnv.Load(DotEnvOptions(probeForEnv = true, ignoreExceptions = false))
 

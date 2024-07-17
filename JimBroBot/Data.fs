@@ -33,11 +33,6 @@ type SpeedExerciseDetail =
 
 type TimeExerciseDetail = { Id: uint32; DurationSec: uint32 }
 
-// TODO: Replace temporary connection string with proper environment setup
-let connection =
-    "Host=localhost;Port=5432;Username=jimbrobotdb;\
-                        Password=jimbrobotdbpassword;Database=jimbrobotdb"
-
 let readBotUser (connectionString: string) (discordId: string) =
     connectionString
     |> Sql.connect
