@@ -38,16 +38,20 @@ let readExerciseLogEntriesForBotUser (connectionString: string) (botUserId: int)
           LogDate = read.dateOnly "log_date" })
 
 
-let loadDataForUser (connectionString: string, discordId: string) =
+let loadDataForUser (connectionString: string) (discordId: string) =
     task {
-        let! botUser = readBotUser connectionString discordId
-        let! botUserExercises = readExercisesForBotUser connectionString botUser.Id
+        try
+            let! botUser = readBotUser connectionString discordId
+            let! botUserExercises = readExercisesForBotUser connectionString botUser.Id
 
-        let exerciseInfos = botUserExercises |> Seq.map databaseExerciseToDomainExerciseInfo
+            let exerciseInfos = botUserExercises |> Seq.map databaseExerciseToDomainExerciseInfo
 
-        // TODO: Figure out way to load and combine exercise log
-        return
-            { Id = discordId
-              Exercises = exerciseInfos
-              ExerciseLog = Seq.empty }
+            // TODO: Figure out way to load and combine exercise log
+            return
+                Ok
+                    { Id = discordId
+                      Exercises = exerciseInfos
+                      ExerciseLog = Seq.empty }
+        with NoResultsException(_) ->
+            return Error NoUserFound
     }

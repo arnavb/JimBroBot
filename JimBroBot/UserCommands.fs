@@ -6,6 +6,7 @@ open TimeSpanParserUtil
 
 open JimBroBot.DomainTypes
 open JimBroBot.Converters
+open JimBroBot.Data
 
 let addExerciseBuilder name =
     (new SlashCommandBuilder())
@@ -250,14 +251,32 @@ let profileResponder (command: SocketSlashCommand) connectionString =
     task {
         do! command.DeferAsync()
 
-        let user = command.User
+        let botUserId = command.User.Id |> string
 
-        let profileEmbed =
-            (EmbedBuilder())
-                .WithTitle($"{user.Mention}'s Profile")
-                .WithDescription("A summary of various stats")
+        let! user = loadDataForUser connectionString botUserId
 
-        let! _ = command.FollowupAsync(embed = profileEmbed.Build())
+        match user with
+        | Ok user ->
+            let profileEmbed =
+                (EmbedBuilder())
+                    .WithTitle($"{command.User.GlobalName}'s Profile")
+                    .WithDescription("A summary of various stats")
+                    .AddField(
+                        (EmbedFieldBuilder())
+                            .WithIsInline(true)
+                            .WithName("Exercises")
+                            .WithValue(user.Exercises |> Seq.length)
+                    )
 
-        return ()
+            let! _ = command.FollowupAsync(embed = profileEmbed.Build())
+
+            return ()
+        | Error(NoUserFound) ->
+            let! _ = command.FollowupAsync "User has no bot account!"
+
+            return ()
+        | Error(_) ->
+            let! _ = command.FollowupAsync "Unexpected error; try again later."
+
+            return ()
     }

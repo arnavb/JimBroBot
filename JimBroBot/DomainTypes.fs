@@ -8,6 +8,7 @@ type BotError =
     | NoEnvBotToken
     | BotStartError of string
     | MissingCommandHandler
+    | NoUserFound
 
 type ExerciseType =
     | SetBased
